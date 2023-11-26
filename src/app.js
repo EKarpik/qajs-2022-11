@@ -1,11 +1,11 @@
-/**
+/* /**
  * Проверка имени пользователя
  * @param {string} name
  * @returns {boolean}
  */
 
-export const nameIsValid = (name) =>
-  !!name && name.length >= 2 && !name.includes(" ");
+/* export const nameIsValid = (name) =>
+  !!name && name.length >= 2 && !name.includes(" "); */
 
 /**
  * Удаление пробелов из строки
@@ -14,7 +14,7 @@ export const nameIsValid = (name) =>
  * @returns {string}
  */
 
-export const fullTrim = (text) => (text || "").replace(/\s/g, "");
+/* export const fullTrim = (text) => (text || "").replace(/\s/g, ""); */
 
 /**
  * Подсчёт суммы заказа
@@ -28,7 +28,7 @@ export const fullTrim = (text) => (text || "").replace(/\s/g, "");
  * @example getTotal([{ price: 10, quantity: 10 }], 10) // 90
  * @example getTotal([{ price: 10, quantity: 10 }], 100) // 0
  */
-export const getTotal = (items = [], discount = 0) => {
+/* export const getTotal = (items = [], discount = 0) => {
   if (typeof discount !== "number") {
     throw new Error("Скидка должна быть числом");
   }
@@ -39,4 +39,19 @@ export const getTotal = (items = [], discount = 0) => {
     return acc + item.price * item.quantity;
   }, 0);
   return total - (total * discount) / 100;
-};
+}; */ 
+
+const object_scores = {
+  Anna: 10,
+  Olga: 1,
+  Ivan: 5,
+  Petr: 12,
+  Sergey: 15};
+
+//подсчёт суммы баллов
+let sum = 0;
+for (let value in object_scores) {
+  sum += object_scores[value];
+}
+//вывод суммы баллов
+console.log(sum); 
