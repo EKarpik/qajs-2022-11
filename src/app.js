@@ -39,14 +39,16 @@
     return acc + item.price * item.quantity;
   }, 0);
   return total - (total * discount) / 100;
-}; */ 
+}; */
 
+//объект с исходными данными
 const object_scores = {
   Anna: 10,
   Olga: 1,
   Ivan: 5,
   Petr: 12,
-  Sergey: 15};
+  Sergey: 15,
+};
 
 //подсчёт суммы баллов
 let sum = 0;
@@ -54,4 +56,4 @@ for (let value in object_scores) {
   sum += object_scores[value];
 }
 //вывод суммы баллов
-console.log(sum); 
+console.log(sum);
