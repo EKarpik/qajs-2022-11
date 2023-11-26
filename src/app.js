@@ -41,6 +41,7 @@
   return total - (total * discount) / 100;
 }; */
 
+//объект с исходными данными
 const object_scores = {
   Anna: 10,
   Olga: 1,
