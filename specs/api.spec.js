@@ -1,6 +1,9 @@
-import supertest from "supertest";
-import user from "../helper/user";
-import config from "../config";
+//import supertest from "supertest";
+import user from "../framework/services/user";
+import auth from "../framework/services/auth";
+import config from "../framework/config/config";
+import { createUser } from "../framework/fixtures/userFixture";
+const { url } = config.url;
 
 // //тесты с урока
 // test('Успешная авторизация с правильным логином и паролем', async () =>{
@@ -22,55 +25,93 @@ import config from "../config";
 // });
 
 //оптимизированные тесты с прошлого урока
-describe("5 test for bookstore", () => {
-  test("создание пользователя c ошибкой, логин уже используется", async () => {
-    const res = await user.createUser({
-      username: "Test",
-      password: "Test123@",
-    });
-    expect(res.status).toBe(406);
-    expect(res.body.code).toBe("1204");
-    expect(res.body.message).toBe("User exists!");
-  });
-  test("Создание пользователя c ошибкой, пароль не подходит", async () => {
-    const res = await user.createUser({
-      username: "limonchik",
-      password: "Tewr",
-    });
-    expect(res.status).toBe(400);
-    expect(res.body.code).toBe("1300");
-    expect(res.body.message).toContain(
-      "Passwords must have at least one non alphanumeric character",
-    );
-  });
-  test("Создание пользователя успешно", async () => {
-    const res = await user.createUser({
-      username: "limonch",
-      password: "Test123@",
-    });
-    expect(res.status).toBe(201);
-    console.log(res.body);
+// describe("5 test for bookstore", () => {
+//   test("создание пользователя c ошибкой, логин уже используется", async () => {
+//     const res = await user.newUser({
+//       username: "Test",
+//       password: "Test123@",
+//     });
+//     expect(res.status).toBe(406);
+//     expect(res.body.code).toBe("1204");
+//     expect(res.body.message).toBe("User exists!");
+//   });
+//   test("Создание пользователя c ошибкой, пароль не подходит", async () => {
+//     const res = await user.newUser({
+//       username: "limonchik",
+//       password: "Tewr",
+//     });
+//     expect(res.status).toBe(400);
+//     expect(res.body.code).toBe("1300");
+//     expect(res.body.message).toContain(
+//       "Passwords must have at least one non alphanumeric character",
+//     );
+//   });
+//   test("Создание пользователя успешно", async () => {
+//     const res = await user.newUser({
+//       username: "limonch",
+//       password: "Test123@",
+//     });
+//     expect(res.status).toBe(201);
+//     console.log(res.body);
+//   });
+
+//домашнее задание №7
+describe("Users", () => {
+  let token;
+  let userId;
+  let newOne;
+
+
+  beforeAll(async () => {
+    const newOne = createUser;
+    return newOne;
   });
 
-  //домашнее задание №7
+  test("Авторизован ли пользователь?", async () => {
+    const responseCreateUser = await user.newUser(newOne);
+    userId = responseCreateUser.data.userID;
 
-  test('Успешная авторизация', async () =>{
-    const res = await user.login(config.credentials)
-    expect(res.status).toBe(200)
-    expect(typeof res.body.token).toEqual('string')
-    });
+    const { data: authorizedBeforeLogin } = await auth.login(newOne);
 
-    test("Информация о юзере", async () => {
-      const res = await user.userInfo(config.userID)
-      expect(res.status).toBe(201);
-      return (res.id);
-    });
-  test("Удаление пользователя успешно", async () => {
-    const res = await user.delUser(config.userID)
-    expect(res.status).toBe(201);
-    return (res.message);
+    const responseToken = await auth.getAuthToken(newOne);
+    token = responseToken.data.token;
+
+    const { data: authorizedAfterLogin } = await auth.login(newOne);
+
+    expect(authorizedBeforeLogin).toBe(false);
+    expect(authorizedAfterLogin).toBe(true);
+  });
+
+  test("Информация о юзере", async () => {
+    const response = await user.userInfo({ userId, token });
+    expect(response.status).toBe(201);
+    return response.data;
+  });
+
+  test("Удаление юзера", async () => {
+    const response = await user.delUser({ userId, token });
+    expect(response.status).toBe(204);
+    expect(response.data).toBe("");
   });
 });
+
+// test('Успешная авторизация', async () =>{
+//   const res = await user.login(config.credentials)
+//   expect(res.status).toBe(200)
+//   expect(typeof res.body.token).toEqual('string')
+//   });
+
+//   test("Информация о юзере", async () => {
+//     const res = await user.userInfo(config.userID)
+//     expect(res.status).toBe(201);
+//     return (res.id);
+//   });
+// test("Удаление пользователя успешно", async () => {
+//   const res = await user.delUser(config.userID)
+//   expect(res.status).toBe(201);
+//   return (res.message);
+// });
+// });
 
 // describe("5 test for bookstore", () => {
 // test("создание пользователя c ошибкой, логин уже используется", async () => {
